@@ -25,7 +25,7 @@ export default function Blog() {
     }
   };
 
-  useEffect(() => { fetchBlogs(); }, [page]);
+  useEffect(() => { fetchBlogs(); }, [fetchBlogs]); // eslint-disable-line
 
   const handleSearch = (e) => {
     e.preventDefault();

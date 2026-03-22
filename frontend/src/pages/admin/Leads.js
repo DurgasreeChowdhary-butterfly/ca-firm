@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getLeads, updateLead, deleteLead } from '../../utils/api';
-import { Search, Filter, Trash2, Edit, X, Check } from 'lucide-react';
+import { Search, Trash2, Edit, X, Check } from 'lucide-react';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import toast from 'react-hot-toast';
 
