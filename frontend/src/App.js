@@ -7,6 +7,7 @@ import Layout from './components/layout/Layout';
 import AdminLayout from './components/layout/AdminLayout';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import ScrollToTop from './components/common/ScrollToTop';
 
 // Lazy load pages
 const Home = lazy(() => import('./pages/Home'));
@@ -31,6 +32,10 @@ function App() {
     <HelmetProvider>
       <AuthProvider>
         <Router>
+        
+  <ScrollToTop />    {/* add this line */}
+  
+  ...
           <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
           <Suspense fallback={<LoadingSpinner fullPage />}>
             <Routes>
