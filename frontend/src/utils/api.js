@@ -1,0 +1,57 @@
+import axios from 'axios';
+
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+const api = axios.create({ baseURL: API_BASE, timeout: 10000 });
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('ca_admin_token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401 && window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin/login') {
+      localStorage.removeItem('ca_admin_token');
+      window.location.href = '/admin/login';
+    }
+    return Promise.reject(err);
+  }
+);
+
+// Public APIs
+export const submitLead = (data) => api.post('/leads', data);
+export const getAvailableSlots = (date) => api.get(`/appointments/slots?date=${date}`);
+export const bookAppointment = (data) => api.post('/appointments', data);
+export const getBlogs = (params) => api.get('/blogs', { params });
+export const getBlogBySlug = (slug) => api.get(`/blogs/${slug}`);
+
+// Admin Auth
+export const adminLogin = (credentials) => api.post('/auth/login', credentials);
+export const getAdminMe = () => api.get('/auth/me');
+export const changePassword = (data) => api.put('/auth/change-password', data);
+
+// Admin - Leads
+export const getLeads = (params) => api.get('/admin/leads', { params });
+export const updateLead = (id, data) => api.put(`/admin/leads/${id}`, data);
+export const deleteLead = (id) => api.delete(`/admin/leads/${id}`);
+export const getLeadStats = () => api.get('/admin/leads/stats');
+
+// Admin - Appointments
+export const getAppointments = (params) => api.get('/admin/appointments', { params });
+export const updateAppointment = (id, data) => api.put(`/admin/appointments/${id}`, data);
+export const deleteAppointment = (id) => api.delete(`/admin/appointments/${id}`);
+
+// Admin - Blogs
+export const getAdminBlogs = (params) => api.get('/admin/blogs', { params });
+export const getAdminBlog = (id) => api.get(`/admin/blogs/${id}`);
+export const createBlog = (data) => api.post('/admin/blogs', data);
+export const updateBlog = (id, data) => api.put(`/admin/blogs/${id}`, data);
+export const deleteBlog = (id) => api.delete(`/admin/blogs/${id}`);
+
+// Admin - Dashboard stats
+export const getDashboardStats = () => api.get('/admin/stats');
+
+export default api;
