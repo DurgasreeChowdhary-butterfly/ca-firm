@@ -4,6 +4,7 @@ import SEO from '../components/common/SEO';
 import LeadForm from '../components/common/LeadForm';
 import { SERVICES, TESTIMONIALS, STATS, FAQS } from '../data';
 import { ArrowRight, CheckCircle, Star, ChevronDown, Award, Shield, Clock, Users, Phone, ExternalLink } from 'lucide-react';
+import GoogleReviews from '../components/common/GoogleReviews';
 
 const PHONE_TEL = 'tel:+919876543210';
 const PHONE_DISPLAY = '+91 98765 43210';
@@ -307,6 +308,73 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── CA Photo + Personal Trust Section ── */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* CA Photo side */}
+            <div className="flex flex-col items-center lg:items-start">
+              <p className="text-blue-700 font-semibold text-sm uppercase tracking-wider mb-4">Meet Your CA</p>
+              <div className="relative mb-6">
+                {/* Photo placeholder — replace src with real CA photo */}
+                <div className="w-64 h-64 rounded-2xl overflow-hidden shadow-xl border-4 border-blue-100">
+                  <img
+                    src="https://ui-avatars.com/api/?name=CA+Rajan+Sharma&background=1e40af&color=fff&size=256&font-size=0.3"
+                    alt="CA Rajan Sharma - Founder, CA Firm Mumbai"
+                    className="w-full h-full object-cover"
+                    onError={e => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.style.background = '#1e40af';
+                    }}
+                  />
+                </div>
+                {/* ICAI badge overlay */}
+                <div className="absolute -bottom-3 -right-3 bg-amber-400 text-blue-900 px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg">
+                  ICAI Reg: {ICAI_NO}
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>CA Rajan Sharma</h3>
+              <p className="text-blue-700 font-medium mb-2">Founder & Senior Partner · FCA</p>
+              <p className="text-gray-500 text-sm text-center lg:text-left leading-relaxed max-w-sm">
+                FCA with 20 years of experience in corporate taxation, statutory audits, and business advisory for SMEs across {CITY}.
+              </p>
+              <div className="flex gap-3 mt-4">
+                <a href={PHONE_TEL}
+                  className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-all">
+                  <Phone className="w-4 h-4" /> Call Directly
+                </a>
+                <a href="https://www.icai.org/post/know-your-ca" target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-1 border border-blue-200 text-blue-700 hover:bg-blue-50 font-medium px-4 py-2 rounded-xl text-sm transition-all">
+                  Verify ICAI <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+            {/* Message from CA */}
+            <div>
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100 relative">
+                <div className="text-6xl text-blue-200 font-serif absolute top-4 left-6 leading-none">"</div>
+                <div className="pt-4">
+                  <p className="text-gray-700 text-lg leading-relaxed italic mb-4">
+                    I started this firm with one mission — to give every business owner and individual in {CITY} access to expert, honest financial guidance. Not just the large corporates, but every small business, every salaried employee, every startup founder.
+                  </p>
+                  <p className="text-gray-700 leading-relaxed italic">
+                    In 20 years, what hasn't changed is our commitment: we meet every deadline, we explain everything in plain language, and we genuinely care about your financial outcome.
+                  </p>
+                  <div className="mt-6 pt-4 border-t border-blue-100">
+                    <div className="flex gap-1 mb-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
+                      ))}
+                    </div>
+                    <p className="text-gray-600 text-sm">Personally handled 2,000+ client cases · Never missed a filing deadline</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Testimonials ── */}
       <section className="py-16 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -334,6 +402,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── Google Reviews ── */}
+      <GoogleReviews />
 
       {/* ── FAQ ── */}
       <section className="py-16 lg:py-20 bg-white">

@@ -154,8 +154,12 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {TEAM.map((member) => (
               <div key={member.name} className="card text-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-                  {member.name.split(' ')[1][0]}
+                <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-blue-100 shadow-md">
+                  <img
+                    src={member.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=1e40af&color=fff&size=200`}
+                    alt={`${member.name} - CA ${member.role}`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   <Award className="w-3 h-3" /> {member.experience}

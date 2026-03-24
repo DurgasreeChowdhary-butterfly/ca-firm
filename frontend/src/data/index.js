@@ -151,6 +151,7 @@ export const FAQS = [
 export const TEAM = [
   {
     name: 'CA Rajan Sharma',
+    photo: 'https://ui-avatars.com/api/?name=Rajan+Sharma&background=1e40af&color=fff&size=200',
     role: 'Founder & Senior Partner',
     experience: '20 years',
     specialization: 'Corporate Tax & Audit',
@@ -158,6 +159,7 @@ export const TEAM = [
   },
   {
     name: 'CA Priya Mehta',
+    photo: 'https://ui-avatars.com/api/?name=Priya+Mehta&background=1e40af&color=fff&size=200',
     role: 'Partner - Direct Tax',
     experience: '12 years',
     specialization: 'Income Tax & International Tax',
@@ -165,6 +167,7 @@ export const TEAM = [
   },
   {
     name: 'CA Arjun Patel',
+    photo: 'https://ui-avatars.com/api/?name=Arjun+Patel&background=1e40af&color=fff&size=200',
     role: 'Partner - GST & Indirect Tax',
     experience: '10 years',
     specialization: 'GST & Indirect Taxation',
