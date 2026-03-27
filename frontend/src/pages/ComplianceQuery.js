@@ -37,7 +37,7 @@ export default function ComplianceQuery() {
     }
   };
 
-  const useSampleQuestion = (q) => setForm(f => ({ ...f, query: q }));
+  const applySampleQuestion = (q) => setForm(f => ({ ...f, query: q }));
 
   return (
     <>
@@ -160,7 +160,7 @@ export default function ComplianceQuery() {
                 <h3 className="font-semibold text-gray-900 mb-3 text-sm">💡 Sample Questions</h3>
                 <div className="space-y-2">
                   {SAMPLE_QUESTIONS.map((q, i) => (
-                    <button key={i} onClick={() => useSampleQuestion(q)}
+                    <button key={i} onClick={() => applySampleQuestion(q)}
                       className="w-full text-left text-xs text-gray-600 bg-gray-50 hover:bg-blue-50 hover:text-blue-700 p-2.5 rounded-lg transition-colors leading-relaxed">
                       {q}
                     </button>
