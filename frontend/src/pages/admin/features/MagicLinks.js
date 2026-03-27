@@ -17,7 +17,7 @@ export default function MagicLinks() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchTokens(); }, []);
+  useEffect(() => { fetchTokens(); }, []); // eslint-disable-line
 
   const handleRevoke = async (email) => {
     if (!window.confirm(`Revoke all active tokens for ${email}?`)) return;

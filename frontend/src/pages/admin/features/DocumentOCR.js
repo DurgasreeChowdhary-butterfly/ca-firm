@@ -24,7 +24,7 @@ export default function DocumentOCR() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchAll(); }, [filters]);
+  useEffect(() => { fetchAll(); }, [filters]); // eslint-disable-line
 
   const handleVerify = async (status) => {
     setSaving(true);

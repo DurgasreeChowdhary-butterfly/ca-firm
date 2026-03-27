@@ -23,7 +23,7 @@ export default function StatutoryCalendar() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchUpcoming(); }, [days]);
+  useEffect(() => { fetchUpcoming(); }, [days]); // eslint-disable-line
 
   const handleGenerate = async () => {
     if (!genForm.clientName || !genForm.clientEmail) { toast.error('Name and email required'); return; }

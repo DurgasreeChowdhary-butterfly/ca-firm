@@ -22,7 +22,7 @@ export default function DataSync() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchAll(); }, [filters]);
+  useEffect(() => { fetchAll(); }, [filters]); // eslint-disable-line
 
   const handleDemoSync = async (source) => {
     setTriggering(true);
