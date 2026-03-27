@@ -55,3 +55,32 @@ export const deleteBlog = (id) => api.delete(`/admin/blogs/${id}`);
 export const getDashboardStats = () => api.get('/admin/stats');
 
 export default api;
+
+// ── Feature 1: Compliance Engine ──
+export const submitComplianceQuery = (data) => api.post('/compliance/query', data);
+export const getAdminComplianceQueries = (params) => api.get('/admin/compliance', { params });
+export const updateComplianceQuery = (id, data) => api.put(`/admin/compliance/${id}`, data);
+
+// ── Feature 2: Document OCR ──
+export const uploadDocument = (formData) => api.post('/documents/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const getAdminDocuments = (params) => api.get('/admin/documents', { params });
+export const getDocumentStats = () => api.get('/admin/documents/stats');
+export const reviewDocument = (id, data) => api.put(`/admin/documents/${id}/review`, data);
+
+// ── Feature 3: Statutory Calendar ──
+export const generateCalendar = (data) => api.post('/calendar/generate', data);
+export const getClientCalendar = (email, fy) => api.get(`/calendar/${email}`, { params: { fy } });
+export const getUpcomingDeadlines = (days) => api.get('/admin/calendar/upcoming', { params: { days } });
+export const markComplianceDone = (calendarId, idx, data) => api.put(`/admin/calendar/${calendarId}/complete/${idx}`, data);
+
+// ── Feature 4: Magic Link ──
+export const requestMagicLink = (data) => api.post('/magic-link/request', data);
+export const validateMagicLink = (data) => api.post('/magic-link/validate', data);
+export const getMagicLinks = (params) => api.get('/admin/magic-links', { params });
+export const revokeTokens = (email) => api.delete(`/admin/magic-links/revoke/${email}`);
+
+// ── Feature 5: Data Sync ──
+export const triggerDemoSync = (data) => api.post('/sync/demo/trigger', data);
+export const getSyncRecords = (params) => api.get('/admin/sync/records', { params });
+export const getSyncStats = () => api.get('/admin/sync/stats');
+export const resolveSyncConflict = (id, data) => api.put(`/admin/sync/${id}/resolve`, data);

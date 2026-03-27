@@ -136,6 +136,8 @@ export default function Navbar() {
               { to: '/services', label: 'All Services' },
               ...SERVICES.map(s => ({ to: `/services/${s.id}`, label: `  ${s.icon} ${s.title}`, sub: true })),
               { to: '/blog', label: 'Blog' },
+  { to: '/compliance-query', label: 'Tax Q&A' },
+  { to: '/upload-document', label: 'Upload Docs' },
               { to: '/contact', label: 'Contact' },
             ].map(({ to, label, exact, sub }) => (
               <NavLink key={to} to={to} end={exact}

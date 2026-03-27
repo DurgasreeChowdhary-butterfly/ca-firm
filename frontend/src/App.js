@@ -7,7 +7,6 @@ import Layout from './components/layout/Layout';
 import AdminLayout from './components/layout/AdminLayout';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import ProtectedRoute from './components/common/ProtectedRoute';
-import ScrollToTop from './components/common/ScrollToTop';
 
 // Lazy load pages
 const Home = lazy(() => import('./pages/Home'));
@@ -18,6 +17,8 @@ const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const Contact = lazy(() => import('./pages/Contact'));
 const BookAppointment = lazy(() => import('./pages/BookAppointment'));
+const ComplianceQuery = lazy(() => import('./pages/ComplianceQuery'));
+const DocumentUpload = lazy(() => import('./pages/DocumentUpload'));
 
 // Admin pages
 const AdminLogin = lazy(() => import('./pages/admin/Login'));
@@ -26,16 +27,17 @@ const AdminLeads = lazy(() => import('./pages/admin/Leads'));
 const AdminAppointments = lazy(() => import('./pages/admin/Appointments'));
 const AdminBlogs = lazy(() => import('./pages/admin/Blogs'));
 const AdminBlogEditor = lazy(() => import('./pages/admin/BlogEditor'));
+const AdminComplianceEngine = lazy(() => import('./pages/admin/features/ComplianceEngine'));
+const AdminDocumentOCR = lazy(() => import('./pages/admin/features/DocumentOCR'));
+const AdminStatutoryCalendar = lazy(() => import('./pages/admin/features/StatutoryCalendar'));
+const AdminMagicLinks = lazy(() => import('./pages/admin/features/MagicLinks'));
+const AdminDataSync = lazy(() => import('./pages/admin/features/DataSync'));
 
 function App() {
   return (
     <HelmetProvider>
       <AuthProvider>
         <Router>
-        
-  <ScrollToTop />    {/* add this line */}
-  
-  ...
           <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
           <Suspense fallback={<LoadingSpinner fullPage />}>
             <Routes>
@@ -49,6 +51,8 @@ function App() {
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/book-appointment" element={<BookAppointment />} />
+                <Route path="/compliance-query" element={<ComplianceQuery />} />
+                <Route path="/upload-document" element={<DocumentUpload />} />
               </Route>
 
               {/* Admin routes */}
@@ -60,6 +64,11 @@ function App() {
                 <Route path="/admin/blogs" element={<AdminBlogs />} />
                 <Route path="/admin/blogs/new" element={<AdminBlogEditor />} />
                 <Route path="/admin/blogs/edit/:id" element={<AdminBlogEditor />} />
+                <Route path="/admin/compliance" element={<AdminComplianceEngine />} />
+                <Route path="/admin/documents" element={<AdminDocumentOCR />} />
+                <Route path="/admin/calendar" element={<AdminStatutoryCalendar />} />
+                <Route path="/admin/magic-links" element={<AdminMagicLinks />} />
+                <Route path="/admin/sync" element={<AdminDataSync />} />
               </Route>
             </Routes>
           </Suspense>
