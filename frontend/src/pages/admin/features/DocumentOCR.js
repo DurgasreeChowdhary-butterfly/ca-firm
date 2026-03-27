@@ -1,11 +1,107 @@
 import React, { useState, useEffect } from 'react';
 import { getAdminDocuments, reviewDocument, getDocumentStats } from '../../../utils/api';
-import { FileText, CheckCircle, Clock, AlertTriangle, X, Eye } from 'lucide-react';
+import { FileText, CheckCircle, AlertTriangle, X, Eye, Download, ZoomIn, ZoomOut } from 'lucide-react';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
 import toast from 'react-hot-toast';
 
-const STATUS_COLORS = { uploaded: 'bg-gray-100 text-gray-600', processing: 'bg-blue-50 text-blue-700', processed: 'bg-green-50 text-green-700', needs_review: 'bg-amber-50 text-amber-700', verified: 'bg-emerald-50 text-emerald-700', rejected: 'bg-red-50 text-red-700' };
-const TYPE_LABELS = { bank_statement: '🏦 Bank Statement', gst_invoice: '🧾 GST Invoice', form_16: '📋 Form 16', itr_acknowledgement: '✅ ITR Ack', tds_certificate: '📄 TDS Cert', balance_sheet: '📊 Balance Sheet', salary_slip: '💰 Salary Slip', other: '📁 Other' };
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+const STATUS_COLORS = {
+  uploaded: 'bg-gray-100 text-gray-600',
+  processing: 'bg-blue-50 text-blue-700',
+  processed: 'bg-green-50 text-green-700',
+  needs_review: 'bg-amber-50 text-amber-700',
+  verified: 'bg-emerald-50 text-emerald-700',
+  rejected: 'bg-red-50 text-red-700'
+};
+
+const TYPE_LABELS = {
+  bank_statement: '🏦 Bank Statement',
+  gst_invoice: '🧾 GST Invoice',
+  form_16: '📋 Form 16',
+  itr_acknowledgement: '✅ ITR Ack',
+  tds_certificate: '📄 TDS Cert',
+  balance_sheet: '📊 Balance Sheet',
+  salary_slip: '💰 Salary Slip',
+  other: '📁 Other'
+};
+
+function FileViewer({ doc, token }) {
+  const [zoom, setZoom] = useState(1);
+  const fileUrl = `${API_BASE}/admin/documents/${doc._id}/file`;
+  const authUrl = `${fileUrl}?token=${token}`;
+  const ext = doc.originalFileName?.split('.').pop()?.toLowerCase();
+  const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext);
+  const isPDF = ext === 'pdf';
+
+  return (
+    <div className="bg-gray-900 rounded-xl overflow-hidden">
+      {/* Toolbar */}
+      <div className="flex items-center justify-between px-4 py-2 bg-gray-800">
+        <div className="flex items-center gap-2">
+          <span className="text-white text-xs font-medium truncate max-w-[200px]">{doc.originalFileName}</span>
+          <span className="text-gray-400 text-xs">
+            {doc.fileSize ? `${(doc.fileSize / 1024).toFixed(0)} KB` : ''}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          {isImage && (
+            <>
+              <button onClick={() => setZoom(z => Math.max(0.5, z - 0.25))}
+                className="p-1 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors">
+                <ZoomOut className="w-3.5 h-3.5" />
+              </button>
+              <span className="text-gray-400 text-xs">{Math.round(zoom * 100)}%</span>
+              <button onClick={() => setZoom(z => Math.min(3, z + 0.25))}
+                className="p-1 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors">
+                <ZoomIn className="w-3.5 h-3.5" />
+              </button>
+            </>
+          )}
+          <a href={authUrl} download={doc.originalFileName} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 text-xs text-gray-400 hover:text-white bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded transition-colors">
+            <Download className="w-3 h-3" /> Download
+          </a>
+        </div>
+      </div>
+
+      {/* File display */}
+      <div className="flex items-center justify-center bg-gray-800 min-h-[300px] max-h-[450px] overflow-auto p-4">
+        {isImage ? (
+          <img
+            src={authUrl}
+            alt={doc.originalFileName}
+            style={{ transform: `scale(${zoom})`, transformOrigin: 'center', transition: 'transform 0.2s' }}
+            className="max-w-full rounded shadow-lg"
+            onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+          />
+        ) : isPDF ? (
+          <iframe
+            src={authUrl}
+            title={doc.originalFileName}
+            className="w-full rounded"
+            style={{ height: '420px', border: 'none' }}
+          />
+        ) : (
+          <div className="text-center text-gray-400 py-8">
+            <FileText className="w-12 h-12 mx-auto mb-3 opacity-40" />
+            <p className="text-sm mb-3">Preview not available for this file type</p>
+            <a href={authUrl} download={doc.originalFileName}
+              className="flex items-center gap-2 bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 mx-auto w-fit">
+              <Download className="w-4 h-4" /> Download File
+            </a>
+          </div>
+        )}
+        {/* Fallback for broken image */}
+        <div style={{ display: 'none' }} className="text-center text-gray-400 py-8">
+          <FileText className="w-12 h-12 mx-auto mb-3 opacity-40" />
+          <p className="text-sm">Could not load preview</p>
+          <a href={authUrl} download className="text-blue-400 text-xs hover:underline mt-1 block">Download instead</a>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function DocumentOCR() {
   const [docs, setDocs] = useState([]);
@@ -14,9 +110,12 @@ export default function DocumentOCR() {
   const [filters, setFilters] = useState({ status: '', documentType: '', page: 1 });
   const [selected, setSelected] = useState(null);
   const [reviewNote, setReviewNote] = useState('');
+  const [docType, setDocType] = useState('');
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState('preview'); // 'preview' | 'data'
+  const token = localStorage.getItem('ca_admin_token') || '';
 
-  const fetchAll = () => {
+  const fetchAll = () => { // eslint-disable-line
     setLoading(true);
     Promise.all([getAdminDocuments(filters), getDocumentStats()])
       .then(([docsR, statsR]) => { setDocs(docsR.data.data); setStats(statsR.data.data); })
@@ -29,19 +128,26 @@ export default function DocumentOCR() {
   const handleVerify = async (status) => {
     setSaving(true);
     try {
-      await reviewDocument(selected._id, { status, reviewNote });
-      toast.success(`Document ${status}`);
+      await reviewDocument(selected._id, { status, reviewNote, documentType: docType || selected.documentType });
+      toast.success(`Document ${status === 'verified' ? 'verified ✅' : 'rejected'}`);
       setSelected(null);
       fetchAll();
     } catch { toast.error('Review failed'); }
     finally { setSaving(false); }
   };
 
+  const openDoc = (doc) => {
+    setSelected(doc);
+    setReviewNote(doc.reviewNote || '');
+    setDocType(doc.documentType || 'other');
+    setActiveTab('preview');
+  };
+
   return (
     <div className="space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Document OCR & Classification</h1>
-        <p className="text-gray-500 text-sm">Auto-classify and extract data from client documents</p>
+        <p className="text-gray-500 text-sm">View, classify and verify client-uploaded documents</p>
       </div>
 
       {/* Stats */}
@@ -67,7 +173,9 @@ export default function DocumentOCR() {
         <select value={filters.status} onChange={e => setFilters(f => ({ ...f, status: e.target.value, page: 1 }))}
           className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">All Status</option>
-          {['uploaded', 'processed', 'needs_review', 'verified', 'rejected'].map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
+          {['uploaded', 'processed', 'needs_review', 'verified', 'rejected'].map(s => (
+            <option key={s} value={s}>{s.replace('_', ' ')}</option>
+          ))}
         </select>
         <select value={filters.documentType} onChange={e => setFilters(f => ({ ...f, documentType: e.target.value, page: 1 }))}
           className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -76,15 +184,17 @@ export default function DocumentOCR() {
         </select>
       </div>
 
-      {/* Document list */}
+      {/* Table */}
       <div className="card p-0 overflow-hidden">
         <div className="overflow-x-auto">
           {loading ? <LoadingSpinner /> : (
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b">
-                <tr>{['Client', 'File', 'Type', 'Extracted Data', 'Status', 'Date', 'Actions'].map(h => (
-                  <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase px-4 py-3">{h}</th>
-                ))}</tr>
+                <tr>
+                  {['Client', 'File', 'Type', 'Extracted Data', 'Status', 'Date', 'View'].map(h => (
+                    <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase px-4 py-3">{h}</th>
+                  ))}
+                </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {docs.length === 0 ? (
@@ -95,21 +205,30 @@ export default function DocumentOCR() {
                       <p className="font-semibold text-gray-900 text-sm">{doc.clientName}</p>
                       <p className="text-gray-400 text-xs">{doc.clientEmail}</p>
                     </td>
-                    <td className="px-4 py-3 text-gray-600 text-xs max-w-[120px] truncate">{doc.originalFileName}</td>
+                    <td className="px-4 py-3 text-gray-600 text-xs max-w-[120px]">
+                      <p className="truncate font-medium">{doc.originalFileName}</p>
+                      {doc.fileSize && <p className="text-gray-400">{(doc.fileSize / 1024).toFixed(0)} KB</p>}
+                    </td>
                     <td className="px-4 py-3 text-sm">{TYPE_LABELS[doc.documentType] || doc.documentType}</td>
                     <td className="px-4 py-3">
-                      {doc.extractedData && Object.entries(doc.extractedData).filter(([,v]) => v).slice(0,2).map(([k,v]) => (
-                        <p key={k} className="text-xs text-gray-500"><span className="font-medium">{k}:</span> {String(v)}</p>
+                      {doc.extractedData && Object.entries(doc.extractedData).filter(([, v]) => v).slice(0, 2).map(([k, v]) => (
+                        <p key={k} className="text-xs text-gray-500">
+                          <span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1')}:</span> {String(v)}
+                        </p>
                       ))}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[doc.status]}`}>{doc.status.replace('_', ' ')}</span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[doc.status]}`}>
+                        {doc.status?.replace('_', ' ')}
+                      </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">{new Date(doc.createdAt).toLocaleDateString('en-IN')}</td>
+                    <td className="px-4 py-3 text-gray-400 text-xs">
+                      {new Date(doc.createdAt).toLocaleDateString('en-IN')}
+                    </td>
                     <td className="px-4 py-3">
-                      <button onClick={() => { setSelected(doc); setReviewNote(doc.reviewNote || ''); }}
-                        className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors">
-                        <Eye className="w-4 h-4" />
+                      <button onClick={() => openDoc(doc)}
+                        className="flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium px-3 py-1.5 rounded-lg text-xs transition-colors">
+                        <Eye className="w-3.5 h-3.5" /> View
                       </button>
                     </td>
                   </tr>
@@ -120,52 +239,126 @@ export default function DocumentOCR() {
         </div>
       </div>
 
-      {/* Review Modal */}
+      {/* ── Full-screen Review Modal ── */}
       {selected && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl w-full max-w-xl p-6 shadow-2xl my-8">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-gray-900">Review Document</h3>
-              <button onClick={() => setSelected(null)}><X className="w-5 h-5 text-gray-400" /></button>
-            </div>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400 mb-1">Client</p>
-                  <p className="font-semibold">{selected.clientName}</p>
-                  <p className="text-gray-500 text-xs">{selected.clientEmail}</p>
-                </div>
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400 mb-1">Document Type</p>
-                  <p className="font-semibold">{TYPE_LABELS[selected.documentType]}</p>
-                  <p className="text-gray-500 text-xs">{selected.originalFileName}</p>
-                </div>
-              </div>
-              <div className="bg-blue-50 rounded-xl p-4">
-                <p className="text-xs font-semibold text-blue-700 mb-2">🤖 AUTO-EXTRACTED DATA</p>
-                {Object.entries(selected.extractedData || {}).filter(([,v]) => v).map(([k, v]) => (
-                  <div key={k} className="flex justify-between text-sm py-0.5">
-                    <span className="text-gray-500 capitalize">{k.replace(/([A-Z])/g, ' $1')}</span>
-                    <span className="font-medium text-gray-900">{String(v)}</span>
-                  </div>
-                ))}
-                {selected.extractionNotes && <p className="text-xs text-amber-600 mt-2">⚠️ {selected.extractionNotes}</p>}
-              </div>
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-start justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl w-full max-w-5xl shadow-2xl my-8">
+
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Review Note</label>
-                <input value={reviewNote} onChange={e => setReviewNote(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Add a note about your review..." />
+                <h3 className="font-bold text-gray-900">Review Document</h3>
+                <p className="text-gray-500 text-xs mt-0.5">
+                  {selected.clientName} · {selected.clientEmail} · {new Date(selected.createdAt).toLocaleDateString('en-IN')}
+                </p>
               </div>
-              <div className="flex gap-3">
-                <button onClick={() => handleVerify('rejected')} disabled={saving}
-                  className="flex-1 border border-red-200 text-red-600 rounded-lg py-2.5 text-sm hover:bg-red-50">
-                  ✗ Reject
-                </button>
-                <button onClick={() => handleVerify('verified')} disabled={saving}
-                  className="flex-1 bg-green-600 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-green-700">
-                  {saving ? 'Saving...' : '✓ Verify & Approve'}
-                </button>
+              <button onClick={() => setSelected(null)} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-0 divide-x divide-gray-100">
+
+              {/* LEFT: File preview */}
+              <div className="p-5">
+                {/* Tabs */}
+                <div className="flex gap-2 mb-4">
+                  {['preview', 'data'].map(tab => (
+                    <button key={tab} onClick={() => setActiveTab(tab)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors capitalize ${activeTab === tab ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                      {tab === 'preview' ? '👁 File Preview' : '🤖 Extracted Data'}
+                    </button>
+                  ))}
+                </div>
+
+                {activeTab === 'preview' ? (
+                  <FileViewer doc={selected} token={token} />
+                ) : (
+                  <div className="space-y-3">
+                    <div className="bg-blue-50 rounded-xl p-4">
+                      <p className="text-xs font-semibold text-blue-700 mb-3 uppercase tracking-wider">Auto-Extracted Fields</p>
+                      {Object.entries(selected.extractedData || {}).filter(([, v]) => v).length > 0 ? (
+                        Object.entries(selected.extractedData || {}).filter(([, v]) => v).map(([k, v]) => (
+                          <div key={k} className="flex justify-between items-center py-1.5 border-b border-blue-100 last:border-0">
+                            <span className="text-gray-500 text-sm capitalize">{k.replace(/([A-Z])/g, ' $1')}</span>
+                            <span className="font-semibold text-gray-900 text-sm">{String(v)}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-gray-400 text-sm text-center py-4">No fields auto-extracted</p>
+                      )}
+                    </div>
+                    {selected.extractionNotes && (
+                      <div className="bg-amber-50 rounded-xl p-3">
+                        <p className="text-xs font-semibold text-amber-700 mb-1">⚠️ OCR Note</p>
+                        <p className="text-amber-700 text-sm">{selected.extractionNotes}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* RIGHT: Review form */}
+              <div className="p-5 space-y-4">
+                <h4 className="font-semibold text-gray-900">CA Review</h4>
+
+                {/* Client info */}
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-xs text-gray-400 mb-1">Client</p>
+                    <p className="font-semibold text-gray-900">{selected.clientName}</p>
+                    <p className="text-gray-500 text-xs">{selected.clientPhone || 'No phone'}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-xs text-gray-400 mb-1">Current Status</p>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[selected.status]}`}>
+                      {selected.status?.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Reclassify type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Document Type <span className="text-gray-400 font-normal">(correct if wrong)</span>
+                  </label>
+                  <select value={docType} onChange={e => setDocType(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {Object.entries(TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                  </select>
+                </div>
+
+                {/* Review note */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">CA Review Note</label>
+                  <textarea value={reviewNote} onChange={e => setReviewNote(e.target.value)} rows={4}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    placeholder="Add notes about this document, extracted data accuracy, any corrections needed..." />
+                </div>
+
+                {/* File info */}
+                <div className="bg-gray-50 rounded-xl p-3 text-xs text-gray-500 space-y-1">
+                  <p><span className="font-medium">File:</span> {selected.originalFileName}</p>
+                  <p><span className="font-medium">Size:</span> {selected.fileSize ? `${(selected.fileSize / 1024).toFixed(0)} KB` : 'Unknown'}</p>
+                  <p><span className="font-medium">Uploaded:</span> {new Date(selected.createdAt).toLocaleString('en-IN')}</p>
+                  {selected.reviewedAt && <p><span className="font-medium">Last Reviewed:</span> {new Date(selected.reviewedAt).toLocaleString('en-IN')}</p>}
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex gap-3 pt-2">
+                  <button onClick={() => handleVerify('rejected')} disabled={saving}
+                    className="flex-1 border-2 border-red-200 text-red-600 font-semibold rounded-xl py-3 text-sm hover:bg-red-50 transition-colors disabled:opacity-40">
+                    ✗ Reject
+                  </button>
+                  <button onClick={() => handleVerify('needs_review')} disabled={saving}
+                    className="flex-1 border-2 border-amber-200 text-amber-600 font-semibold rounded-xl py-3 text-sm hover:bg-amber-50 transition-colors disabled:opacity-40">
+                    ⚠ Flag
+                  </button>
+                  <button onClick={() => handleVerify('verified')} disabled={saving}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl py-3 text-sm transition-colors disabled:opacity-40 flex items-center justify-center gap-2">
+                    {saving ? 'Saving...' : <><CheckCircle className="w-4 h-4" /> Verify</>}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

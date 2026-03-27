@@ -112,4 +112,43 @@ const getDocumentStats = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { uploadDocument, getDocuments, reviewDocument, getDocumentStats };
+// GET /api/admin/documents/:id/file — serve the actual file for preview
+const serveFile = async (req, res, next) => {
+  try {
+    // Allow token via query param for browser <img> and <iframe> src (can't set headers)
+    if (req.query.token && !req.headers.authorization) {
+      req.headers.authorization = `Bearer ${req.query.token}`;
+    }
+    const doc = await Document.findById(req.params.id);
+    if (!doc) return res.status(404).json({ success: false, message: 'Document not found' });
+    
+    const filePath = doc.fileUrl;
+    if (!filePath) return res.status(404).json({ success: false, message: 'File not found on server' });
+    
+    // Build absolute path
+    const absolutePath = path.isAbsolute(filePath) 
+      ? filePath 
+      : path.join(__dirname, '../../uploads', path.basename(filePath));
+    
+    if (!fs.existsSync(absolutePath)) {
+      return res.status(404).json({ success: false, message: 'File no longer exists on server' });
+    }
+    
+    // Set proper content type
+    const ext = path.extname(doc.originalFileName).toLowerCase();
+    const mimeTypes = {
+      '.pdf': 'application/pdf',
+      '.png': 'image/png',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      '.csv': 'text/csv',
+    };
+    
+    res.setHeader('Content-Type', mimeTypes[ext] || 'application/octet-stream');
+    res.setHeader('Content-Disposition', `inline; filename="${doc.originalFileName}"`);
+    res.sendFile(absolutePath);
+  } catch (err) { next(err); }
+};
+
+module.exports = { uploadDocument, getDocuments, reviewDocument, getDocumentStats, serveFile };
