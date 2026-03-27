@@ -75,6 +75,8 @@ app.get('/api', (req, res) => {
   });
 });
 
+app.use('/api', featuresRoutes); // Features: compliance, documents, calendar, magic-link, sync
+
 app.use(notFound);
 app.use(errorHandler);
 
