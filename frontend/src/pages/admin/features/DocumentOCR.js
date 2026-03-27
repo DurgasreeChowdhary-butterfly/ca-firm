@@ -28,76 +28,76 @@ const TYPE_LABELS = {
 
 function FileViewer({ doc, token }) {
   const [zoom, setZoom] = useState(1);
+  const [imgError, setImgError] = useState(false);
   const fileUrl = `${API_BASE}/admin/documents/${doc._id}/file`;
-  const authUrl = `${fileUrl}?token=${token}`;
+  const authUrl = `${fileUrl}?token=${encodeURIComponent(token)}`;
   const ext = doc.originalFileName?.split('.').pop()?.toLowerCase();
   const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext);
   const isPDF = ext === 'pdf';
+
+  const NoPreview = ({ reason }) => (
+    <div className="text-center text-gray-400 py-10">
+      <FileText className="w-12 h-12 mx-auto mb-3 opacity-30" />
+      <p className="text-sm font-medium mb-1">Preview unavailable</p>
+      <p className="text-xs text-gray-500 mb-4">{reason}</p>
+      <a href={authUrl} target="_blank" rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+        <Download className="w-4 h-4" /> Download to view
+      </a>
+    </div>
+  );
 
   return (
     <div className="bg-gray-900 rounded-xl overflow-hidden">
       {/* Toolbar */}
       <div className="flex items-center justify-between px-4 py-2 bg-gray-800">
-        <div className="flex items-center gap-2">
-          <span className="text-white text-xs font-medium truncate max-w-[200px]">{doc.originalFileName}</span>
-          <span className="text-gray-400 text-xs">
-            {doc.fileSize ? `${(doc.fileSize / 1024).toFixed(0)} KB` : ''}
-          </span>
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-white text-xs font-medium truncate max-w-[180px]">{doc.originalFileName}</span>
+          {doc.fileSize && <span className="text-gray-400 text-xs flex-shrink-0">{(doc.fileSize / 1024).toFixed(0)} KB</span>}
         </div>
-        <div className="flex items-center gap-2">
-          {isImage && (
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {isImage && !imgError && (
             <>
               <button onClick={() => setZoom(z => Math.max(0.5, z - 0.25))}
                 className="p-1 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors">
                 <ZoomOut className="w-3.5 h-3.5" />
               </button>
-              <span className="text-gray-400 text-xs">{Math.round(zoom * 100)}%</span>
+              <span className="text-gray-400 text-xs w-10 text-center">{Math.round(zoom * 100)}%</span>
               <button onClick={() => setZoom(z => Math.min(3, z + 0.25))}
                 className="p-1 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors">
                 <ZoomIn className="w-3.5 h-3.5" />
               </button>
             </>
           )}
-          <a href={authUrl} download={doc.originalFileName} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-white bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded transition-colors">
+          <a href={authUrl} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 text-xs text-gray-300 hover:text-white bg-gray-700 hover:bg-gray-600 px-2.5 py-1.5 rounded transition-colors">
             <Download className="w-3 h-3" /> Download
           </a>
         </div>
       </div>
 
-      {/* File display */}
-      <div className="flex items-center justify-center bg-gray-800 min-h-[300px] max-h-[450px] overflow-auto p-4">
-        {isImage ? (
+      {/* File viewer */}
+      <div className="flex items-center justify-center bg-gray-800 min-h-[320px] max-h-[450px] overflow-auto p-3">
+        {isImage && !imgError ? (
           <img
             src={authUrl}
             alt={doc.originalFileName}
-            style={{ transform: `scale(${zoom})`, transformOrigin: 'center', transition: 'transform 0.2s' }}
-            className="max-w-full rounded shadow-lg"
-            onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+            style={{ transform: `scale(${zoom})`, transformOrigin: 'top center', transition: 'transform 0.2s', maxWidth: '100%' }}
+            className="rounded shadow-lg block"
+            onError={() => setImgError(true)}
           />
+        ) : isImage && imgError ? (
+          <NoPreview reason="File may have been removed from server (Render free tier resets files on redeploy)" />
         ) : isPDF ? (
           <iframe
             src={authUrl}
             title={doc.originalFileName}
             className="w-full rounded"
-            style={{ height: '420px', border: 'none' }}
+            style={{ height: '420px', border: 'none', background: 'white' }}
           />
         ) : (
-          <div className="text-center text-gray-400 py-8">
-            <FileText className="w-12 h-12 mx-auto mb-3 opacity-40" />
-            <p className="text-sm mb-3">Preview not available for this file type</p>
-            <a href={authUrl} download={doc.originalFileName}
-              className="flex items-center gap-2 bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 mx-auto w-fit">
-              <Download className="w-4 h-4" /> Download File
-            </a>
-          </div>
+          <NoPreview reason={`Preview not supported for .${ext} files`} />
         )}
-        {/* Fallback for broken image */}
-        <div style={{ display: 'none' }} className="text-center text-gray-400 py-8">
-          <FileText className="w-12 h-12 mx-auto mb-3 opacity-40" />
-          <p className="text-sm">Could not load preview</p>
-          <a href={authUrl} download className="text-blue-400 text-xs hover:underline mt-1 block">Download instead</a>
-        </div>
       </div>
     </div>
   );
