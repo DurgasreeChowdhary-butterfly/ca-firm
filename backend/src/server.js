@@ -11,6 +11,7 @@ const leadRoutes = require('./routes/leads');
 const appointmentRoutes = require('./routes/appointments');
 const blogRoutes = require('./routes/blogs');
 const adminRoutes = require('./routes/admin');
+const featuresRoutes = require('./routes/features');
 
 const app = express();
 const PORT = process.env.PORT || 5000;

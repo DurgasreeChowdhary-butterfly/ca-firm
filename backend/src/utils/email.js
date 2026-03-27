@@ -121,4 +121,33 @@ const sendAppointmentConfirmation = async (appointment) => {
   }
 };
 
-module.exports = { sendLeadNotification, sendLeadAcknowledgement, sendAppointmentConfirmation };
+// module.exports = { sendLeadNotification, sendLeadAcknowledgement, sendAppointmentConfirmation };
+
+// Send magic link email
+const sendMagicLinkEmail = async ({ email, name, link, reportTitle, expiresIn }) => {
+  if (!process.env.EMAIL_USER) return;
+  try {
+    const transporter = createTransporter();
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: `Your secure access link — ${reportTitle}`,
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+          <h2 style="color:#1e40af;">Secure Report Access</h2>
+          <p>Hi ${name},</p>
+          <p>You requested access to <strong>${reportTitle}</strong>. Click the button below to view your report:</p>
+          <div style="text-align:center;margin:30px 0;">
+            <a href="${link}" style="background:#1e40af;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;">
+              View My Report →
+            </a>
+          </div>
+          <p style="color:#6b7280;font-size:12px;">⏱️ This link expires in <strong>${expiresIn}</strong> and can only be used once.</p>
+          <p style="color:#6b7280;font-size:12px;">If you did not request this, please ignore this email.</p>
+        </div>
+      `,
+    });
+  } catch (err) { console.error('Magic link email error:', err.message); }
+};
+
+module.exports = { sendLeadNotification, sendLeadAcknowledgement, sendAppointmentConfirmation, sendMagicLinkEmail };
