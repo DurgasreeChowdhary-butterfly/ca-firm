@@ -37,10 +37,10 @@ export default function Navbar() {
     <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled ? 'bg-white shadow-md' : 'bg-white/95 backdrop-blur-sm'}`}>
 
       {/* Top bar */}
-      <div className="bg-blue-900 text-white text-xs py-1.5 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="bg-blue-900 text-white text-xs py-1.5 px-4 overflow-hidden">
+        <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-1">
           <span className="text-blue-300 hidden sm:block">ICAI Membership No: {ICAI_NO}</span>
-          <div className="flex items-center gap-4 mx-auto sm:mx-0">
+          <div className="flex items-center gap-3 mx-auto sm:mx-0 flex-wrap justify-center">
             <span className="hidden sm:inline text-blue-300">Mon–Sat 9am–7pm</span>
             <a href={PHONE_TEL} className="flex items-center gap-1 hover:text-amber-300 transition-colors font-semibold">
               📞 {PHONE_DISPLAY}
@@ -54,7 +54,7 @@ export default function Navbar() {
       </div>
 
       {/* Main nav */}
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between overflow-hidden">
         <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
           <div className="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center">
             <Scale className="w-4 h-4 text-white" />
