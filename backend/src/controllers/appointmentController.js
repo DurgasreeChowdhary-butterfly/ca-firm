@@ -1,3 +1,4 @@
+const { sendWhatsApp, templates } = require('../utils/whatsapp');
 const Appointment = require('../models/Appointment');
 const { sendAppointmentConfirmation } = require('../utils/email');
 
@@ -63,6 +64,7 @@ const createAppointment = async (req, res, next) => {
       });
     }
 
+    const { whatsapp } = req.body;
     const appointment = await Appointment.create({
       name, email, phone, service,
       date: new Date(date),
@@ -72,6 +74,14 @@ const createAppointment = async (req, res, next) => {
 
     // Send confirmation email (non-blocking)
     sendAppointmentConfirmation(appointment).catch(() => {});
+
+    // Send WhatsApp confirmation
+    const waNum = whatsapp || appointment.phone;
+    if (waNum) {
+      sendWhatsApp(waNum, templates.appointmentConfirmed(
+        appointment.name, appointment.service, appointment.date, appointment.timeSlot
+      )).catch(() => {});
+    }
 
     res.status(201).json({
       success: true,
@@ -140,6 +150,15 @@ const updateAppointment = async (req, res, next) => {
     );
     if (!appointment) {
       return res.status(404).json({ success: false, message: 'Appointment not found' });
+    }
+    // Notify client via WhatsApp on status change
+    if (req.body.status && appointment) {
+      const waNum = appointment.whatsapp || appointment.phone;
+      if (waNum) {
+        sendWhatsApp(waNum, templates.appointmentStatusUpdate(
+          appointment.name, appointment.service, req.body.status
+        )).catch(() => {});
+      }
     }
     res.json({ success: true, message: 'Appointment updated', data: appointment });
   } catch (error) {

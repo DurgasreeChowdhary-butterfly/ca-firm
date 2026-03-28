@@ -1,3 +1,4 @@
+const { sendWhatsApp, templates } = require('../utils/whatsapp');
 const Lead = require('../models/Lead');
 const { sendLeadNotification, sendLeadAcknowledgement } = require('../utils/email');
 
@@ -27,6 +28,12 @@ const createLead = async (req, res, next) => {
     // Send emails (non-blocking)
     sendLeadNotification(lead).catch(() => {});
     sendLeadAcknowledgement(lead).catch(() => {});
+
+    // Send WhatsApp acknowledgement to client
+    const waNum = req.body.whatsapp || req.body.phone;
+    if (waNum) {
+      sendWhatsApp(waNum, templates.leadAcknowledgement(lead.name, lead.service)).catch(() => {});
+    }
 
     res.status(201).json({
       success: true,

@@ -1,3 +1,4 @@
+const { sendWhatsApp, templates } = require('../utils/whatsapp');
 const Document = require('../models/Document');
 const path = require('path');
 const fs = require('fs');
@@ -32,7 +33,7 @@ const uploadDocument = async (req, res, next) => {
   try {
     if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
 
-    const { clientName, clientEmail, clientPhone } = req.body;
+    const { clientName, clientEmail, clientPhone, clientWhatsapp } = req.body;
     if (!clientName || !clientEmail) {
       return res.status(400).json({ success: false, message: 'Name and email are required' });
     }
@@ -41,7 +42,7 @@ const uploadDocument = async (req, res, next) => {
     const extractedData = extractBasicData(req.file.originalname, documentType);
 
     const doc = await Document.create({
-      clientName, clientEmail, clientPhone,
+      clientName, clientEmail, clientPhone, clientWhatsapp,
       originalFileName: req.file.originalname,
       fileSize: req.file.size,
       mimeType: req.file.mimetype,
@@ -51,6 +52,12 @@ const uploadDocument = async (req, res, next) => {
       status: documentType !== 'other' ? 'processed' : 'needs_review',
       fileUrl: req.file.path || req.file.filename,
     });
+
+    // Notify client via WhatsApp
+    const waNum = clientWhatsapp || clientPhone;
+    if (waNum) {
+      sendWhatsApp(waNum, templates.documentUploaded(clientName, req.file.originalname, documentType)).catch(() => {});
+    }
 
     res.status(201).json({
       success: true,
@@ -96,6 +103,15 @@ const reviewDocument = async (req, res, next) => {
       reviewedAt: new Date(),
     }, { new: true });
     if (!doc) return res.status(404).json({ success: false, message: 'Document not found' });
+
+    // Notify client about status change via WhatsApp
+    const waNum = doc.clientWhatsapp || doc.clientPhone;
+    if (waNum) {
+      sendWhatsApp(waNum, templates.documentStatus(
+        doc.clientName, doc.originalFileName, status || 'verified', reviewNote
+      )).catch(() => {});
+    }
+
     res.json({ success: true, message: 'Document reviewed and verified', data: doc });
   } catch (err) { next(err); }
 };

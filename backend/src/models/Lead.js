@@ -7,6 +7,7 @@ const leadSchema = new mongoose.Schema({
     trim: true,
     maxlength: [100, 'Name cannot exceed 100 characters'],
   },
+  whatsapp: { type: String, trim: true },
   phone: {
     type: String,
     required: [true, 'Phone number is required'],

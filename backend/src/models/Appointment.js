@@ -19,6 +19,10 @@ const appointmentSchema = new mongoose.Schema({
     required: [true, 'Phone number is required'],
     trim: true,
   },
+  whatsapp: {
+    type: String,
+    trim: true,
+  },
   service: {
     type: String,
     required: [true, 'Service is required'],

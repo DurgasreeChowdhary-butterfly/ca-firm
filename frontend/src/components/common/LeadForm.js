@@ -3,38 +3,36 @@ import { submitLead } from '../../utils/api';
 import toast from 'react-hot-toast';
 import { Send, Loader } from 'lucide-react';
 
-const SERVICES = [
-  'Income Tax Filing',
-  'GST Registration & Filing',
-  'Company Registration',
-  'Audit & Assurance',
-  'Tax Planning',
-  'Other',
-];
+const SERVICES = ['Income Tax Filing','GST Registration & Filing','Company Registration','Audit & Assurance','Tax Planning','Other'];
 
 export default function LeadForm({ defaultService = '', compact = false }) {
-  const [form, setForm] = useState({ name: '', phone: '', email: '', service: defaultService, message: '' });
+  const [form, setForm] = useState({ name:'', phone:'', whatsapp:'', email:'', service: defaultService, message:'' });
+  const [sameWA, setSameWA] = useState(true);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(f => {
+      const updated = { ...f, [name]: value };
+      if (name === 'phone' && sameWA) updated.whatsapp = value;
+      return updated;
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.phone || !form.email || !form.service) {
-      toast.error('Please fill all required fields');
-      return;
+      toast.error('Please fill all required fields'); return;
     }
     setLoading(true);
     try {
-      await submitLead(form);
+      await submitLead({ ...form, whatsapp: sameWA ? form.phone : form.whatsapp });
       setSubmitted(true);
-      toast.success('Thank you! We will contact you shortly.');
+      toast.success('Enquiry received! We\'ll WhatsApp you shortly.');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   if (submitted) {
@@ -45,8 +43,11 @@ export default function LeadForm({ defaultService = '', compact = false }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2">Enquiry Received!</h3>
-        <p className="text-gray-600">Our team will get back to you within 24 hours.</p>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">Enquiry Received! 🎉</h3>
+        <p className="text-gray-600 text-sm">Our CA will call you within 2 hours.</p>
+        {(form.whatsapp || form.phone) && (
+          <p className="text-green-600 text-sm mt-1">💬 WhatsApp confirmation sent to {sameWA ? form.phone : form.whatsapp}</p>
+        )}
       </div>
     );
   }
@@ -56,35 +57,45 @@ export default function LeadForm({ defaultService = '', compact = false }) {
       <div className={`grid grid-cols-1 ${compact ? '' : 'md:grid-cols-2'} gap-${compact ? '3' : '4'}`}>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-          <input
-            name="name" value={form.name} onChange={handleChange}
-            placeholder="Your full name"
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-          />
+          <input name="name" value={form.name} onChange={handleChange} placeholder="Your full name"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
-          <input
-            name="phone" value={form.phone} onChange={handleChange}
-            placeholder="+91 98765 43210"
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-          />
+          <input name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 98765 43210"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
         </div>
       </div>
+
+      {/* WhatsApp field */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          💬 WhatsApp <span className="text-green-600 text-xs font-normal">(we'll send updates here)</span>
+        </label>
+        <input name="whatsapp" type="tel"
+          value={sameWA ? form.phone : form.whatsapp}
+          onChange={handleChange}
+          disabled={sameWA}
+          placeholder="+91 98765 43210"
+          className={`w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${sameWA ? 'bg-gray-50 text-gray-400' : 'text-gray-700'}`}
+        />
+        <label className="flex items-center gap-2 mt-1.5 cursor-pointer">
+          <input type="checkbox" checked={sameWA}
+            onChange={e => { setSameWA(e.target.checked); if (e.target.checked) setForm(f => ({...f, whatsapp: f.phone})); }}
+            className="rounded border-gray-300 text-green-600" />
+          <span className="text-xs text-gray-500">Same as phone number</span>
+        </label>
+      </div>
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-        <input
-          name="email" type="email" value={form.email} onChange={handleChange}
-          placeholder="you@example.com"
-          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-        />
+        <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="you@example.com"
+          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Service Required *</label>
-        <select
-          name="service" value={form.service} onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white"
-        >
+        <select name="service" value={form.service} onChange={handleChange}
+          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white">
           <option value="">Select a service...</option>
           {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
@@ -92,17 +103,13 @@ export default function LeadForm({ defaultService = '', compact = false }) {
       {!compact && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-          <textarea
-            name="message" value={form.message} onChange={handleChange}
-            rows={3} placeholder="Brief description of your requirements..."
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
-          />
+          <textarea name="message" value={form.message} onChange={handleChange} rows={3}
+            placeholder="Brief description of your requirements..."
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none" />
         </div>
       )}
-      <button
-        type="submit" disabled={loading}
-        className="w-full bg-blue-700 hover:bg-blue-800 disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
-      >
+      <button type="submit" disabled={loading}
+        className="w-full bg-blue-700 hover:bg-blue-800 disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2">
         {loading ? <><Loader className="w-4 h-4 animate-spin" /> Submitting...</> : <><Send className="w-4 h-4" /> Get Free Consultation</>}
       </button>
     </form>

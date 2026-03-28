@@ -1,3 +1,4 @@
+import ScrollToTop from './components/common/ScrollToTop';
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
@@ -42,7 +43,8 @@ function App() {
       <AuthProvider>
         <Router>
           <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
-          <Suspense fallback={<LoadingSpinner fullPage />}>
+          <ScrollToTop />
+        <Suspense fallback={<LoadingSpinner fullPage />}>
             <Routes>
               {/* Public routes */}
               <Route element={<Layout />}>

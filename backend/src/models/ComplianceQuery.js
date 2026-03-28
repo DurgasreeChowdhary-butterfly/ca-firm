@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const complianceQuerySchema = new mongoose.Schema({
   clientName: { type: String, required: true, trim: true },
+  clientPhone: { type: String, trim: true },
+  clientWhatsapp: { type: String, trim: true },
   clientEmail: { type: String, trim: true },
   query: { type: String, required: true, trim: true },
   category: {

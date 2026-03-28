@@ -4,6 +4,7 @@ const documentSchema = new mongoose.Schema({
   clientName: { type: String, required: true, trim: true },
   clientEmail: { type: String, required: true, trim: true },
   clientPhone: { type: String, trim: true },
+  clientWhatsapp: { type: String, trim: true },
   originalFileName: { type: String, required: true },
   fileSize: { type: Number },
   mimeType: { type: String },

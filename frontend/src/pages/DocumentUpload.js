@@ -16,7 +16,8 @@ const DOC_TYPES = [
 ];
 
 export default function DocumentUpload() {
-  const [form, setForm] = useState({ clientName: '', clientEmail: '', clientPhone: '' });
+  const [form, setForm] = useState({ clientName: '', clientEmail: '', clientPhone: '', clientWhatsapp: '' });
+  const [sameAsPhone, setSameAsPhone] = useState(true);
   const [file, setFile] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,6 +46,7 @@ export default function DocumentUpload() {
     formData.append('clientName', form.clientName);
     formData.append('clientEmail', form.clientEmail);
     formData.append('clientPhone', form.clientPhone);
+    formData.append('clientWhatsapp', sameAsPhone ? form.clientPhone : form.clientWhatsapp);
 
     try {
       const res = await uploadDocument(formData);
