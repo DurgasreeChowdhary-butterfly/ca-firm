@@ -29,6 +29,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
+// Serve uploaded documents (admin only - protected by token check in frontend)
+const uploadsPath = require('path').join(__dirname, '../uploads');
+app.use('/uploads', express.static(uploadsPath));
+
 // Root route — friendly response when browser visits localhost:5000
 app.get('/', (req, res) => {
   res.send(`

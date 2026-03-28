@@ -3,7 +3,6 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X, Phone, ChevronDown, Scale } from 'lucide-react';
 import { SERVICES } from '../../data';
 
-// ── UPDATE THESE for your client ──
 const PHONE_DISPLAY = '+91 98765 43210';
 const PHONE_TEL = 'tel:+919876543210';
 const ICAI_NO = 'XXXXXX';
@@ -37,13 +36,12 @@ export default function Navbar() {
   return (
     <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled ? 'bg-white shadow-md' : 'bg-white/95 backdrop-blur-sm'}`}>
 
-      {/* Top bar — phone + ICAI number visible on every page */}
+      {/* Top bar */}
       <div className="bg-blue-900 text-white text-xs py-1.5 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <span className="text-blue-300 hidden sm:block">ICAI Membership No: {ICAI_NO}</span>
           <div className="flex items-center gap-4 mx-auto sm:mx-0">
             <span className="hidden sm:inline text-blue-300">Mon–Sat 9am–7pm</span>
-            {/* PHONE — clickable tel: link */}
             <a href={PHONE_TEL} className="flex items-center gap-1 hover:text-amber-300 transition-colors font-semibold">
               📞 {PHONE_DISPLAY}
             </a>
@@ -57,7 +55,6 @@ export default function Navbar() {
 
       {/* Main nav */}
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
           <div className="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center">
             <Scale className="w-4 h-4 text-white" />
@@ -69,17 +66,15 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden lg:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-5">
           <NavLink to="/" end className={linkCls}>Home</NavLink>
           <NavLink to="/about" className={linkCls}>About</NavLink>
 
+          {/* Services dropdown */}
           <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setServicesOpen(o => !o)}
-              className={`flex items-center gap-1 text-sm font-medium transition-colors ${servicesOpen ? 'text-blue-700' : 'text-gray-700 hover:text-blue-700'}`}
-            >
-              Services
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
+            <button onClick={() => setServicesOpen(o => !o)}
+              className={`flex items-center gap-1 text-sm font-medium transition-colors ${servicesOpen ? 'text-blue-700' : 'text-gray-700 hover:text-blue-700'}`}>
+              Services <ChevronDown className={`w-3.5 h-3.5 transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
             </button>
             {servicesOpen && (
               <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50">
@@ -103,14 +98,15 @@ export default function Navbar() {
             )}
           </div>
 
+          <NavLink to="/compliance-query" className={linkCls}>Tax Q&A 🤖</NavLink>
+          <NavLink to="/upload-document" className={linkCls}>Upload Docs</NavLink>
           <NavLink to="/blog" className={linkCls}>Blog</NavLink>
           <NavLink to="/contact" className={linkCls}>Contact</NavLink>
         </div>
 
-        {/* Desktop CTA — phone always visible */}
+        {/* Desktop CTA */}
         <div className="hidden lg:flex items-center gap-3">
-          <a href={PHONE_TEL}
-            className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-700 transition-colors">
+          <a href={PHONE_TEL} className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-700 transition-colors">
             <Phone className="w-3.5 h-3.5" />
             <span className="font-semibold">{PHONE_DISPLAY}</span>
           </a>
@@ -135,9 +131,9 @@ export default function Navbar() {
               { to: '/about', label: 'About' },
               { to: '/services', label: 'All Services' },
               ...SERVICES.map(s => ({ to: `/services/${s.id}`, label: `  ${s.icon} ${s.title}`, sub: true })),
+              { to: '/compliance-query', label: '🤖 Tax Q&A (AI)' },
+              { to: '/upload-document', label: '📁 Upload Documents' },
               { to: '/blog', label: 'Blog' },
-  { to: '/compliance-query', label: 'Tax Q&A' },
-  { to: '/upload-document', label: 'Upload Docs' },
               { to: '/contact', label: 'Contact' },
             ].map(({ to, label, exact, sub }) => (
               <NavLink key={to} to={to} end={exact}
@@ -148,7 +144,6 @@ export default function Navbar() {
               </NavLink>
             ))}
             <div className="pt-3 border-t border-gray-100 mt-2 space-y-2">
-              {/* Phone in mobile menu — critical */}
               <a href={PHONE_TEL}
                 className="flex items-center justify-center gap-2 bg-blue-700 text-white font-bold py-3 rounded-xl text-sm">
                 📞 Call Now: {PHONE_DISPLAY}

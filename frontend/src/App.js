@@ -19,6 +19,9 @@ const Contact = lazy(() => import('./pages/Contact'));
 const BookAppointment = lazy(() => import('./pages/BookAppointment'));
 const ComplianceQuery = lazy(() => import('./pages/ComplianceQuery'));
 const DocumentUpload = lazy(() => import('./pages/DocumentUpload'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Disclaimer = lazy(() => import('./pages/Disclaimer'));
 
 // Admin pages
 const AdminLogin = lazy(() => import('./pages/admin/Login'));
@@ -53,6 +56,9 @@ function App() {
                 <Route path="/book-appointment" element={<BookAppointment />} />
                 <Route path="/compliance-query" element={<ComplianceQuery />} />
                 <Route path="/upload-document" element={<DocumentUpload />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/disclaimer" element={<Disclaimer />} />
               </Route>
 
               {/* Admin routes */}
