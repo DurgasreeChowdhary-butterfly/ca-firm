@@ -125,6 +125,14 @@ export default function DocumentOCR() {
 
   useEffect(() => { fetchAll(); }, [filters]); // eslint-disable-line
 
+  // Auto-refresh every 4 seconds if any doc is processing
+  useEffect(() => {
+    const hasProcessing = docs.some(d => d.status === 'processing');
+    if (!hasProcessing) return;
+    const timer = setInterval(fetchAll, 4000);
+    return () => clearInterval(timer);
+  }, [docs]); // eslint-disable-line
+
   const handleVerify = async (status) => {
     setSaving(true);
     try {

@@ -43,6 +43,7 @@ const documentSchema = new mongoose.Schema({
     description: String,
   },
   extractionNotes: { type: String },
+  ocrText: { type: String, select: false }, // raw OCR output, hidden by default
   status: {
     type: String,
     enum: ['uploaded', 'processing', 'processed', 'needs_review', 'verified', 'rejected'],
