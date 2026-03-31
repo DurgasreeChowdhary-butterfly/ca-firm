@@ -52,7 +52,9 @@ const documentSchema = new mongoose.Schema({
   reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
   reviewedAt: { type: Date },
   reviewNote: { type: String },
-  fileUrl: { type: String }, // Cloudinary or local path
+  fileUrl: { type: String },         // legacy local path (may not exist on Render)
+  fileData: { type: String },         // base64 encoded file — persists across redeploys
+  fileMimeType: { type: String },     // actual MIME type for serving
   uploadedAt: { type: Date, default: Date.now },
 }, { timestamps: true });
 

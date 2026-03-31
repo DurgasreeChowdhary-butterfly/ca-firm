@@ -302,4 +302,52 @@ function classifyFromFilename(filename) {
   return 'other';
 }
 
-module.exports = { performOCR };
+// ── Entry point called from controller (buffer-based, no disk read needed) ──
+async function performOCRFromBuffer(buffer, mimeType, originalFileName) {
+  const startTime = Date.now();
+
+  // Write buffer to a temp file for Tesseract (needs a file path)
+  const tmpDir = require('fs').mkdtempSync(require('path').join(os.tmpdir(), 'doc-'));
+  const ext = require('path').extname(originalFileName).toLowerCase() || '.bin';
+  const tmpFile = require('path').join(tmpDir, `upload${ext}`);
+
+  try {
+    require('fs').writeFileSync(tmpFile, buffer);
+
+    const result = await extractText(tmpFile, mimeType);
+    const ocrText = result.text || '';
+    const ocrSource = result.source;
+
+    const documentType = ocrText.length > 20
+      ? classifyFromText(ocrText, originalFileName)
+      : classifyFromFilename(originalFileName);
+
+    let extractedData = {};
+    switch (documentType) {
+      case 'gst_invoice':     extractedData = extractGSTInvoice(ocrText); break;
+      case 'bank_statement':  extractedData = extractBankStatement(ocrText); break;
+      case 'form_16':         extractedData = extractForm16(ocrText); break;
+      case 'tds_certificate': extractedData = extractTDSCert(ocrText); break;
+      default:                extractedData = extractGeneric(ocrText); break;
+    }
+
+    const fieldsFound = Object.keys(extractedData).length;
+    const confidence = fieldsFound > 3 ? 0.9 : fieldsFound > 1 ? 0.7 : fieldsFound > 0 ? 0.5 : 0.2;
+    const processingMs = Date.now() - startTime;
+
+    console.log(`[OCR] ${originalFileName}: type=${documentType}, fields=${fieldsFound}, src=${ocrSource}, ${processingMs}ms`);
+
+    return {
+      extractedData,
+      documentType,
+      ocrText: ocrText.substring(0, 1000),
+      ocrSource,
+      confidence,
+      processingMs,
+    };
+  } finally {
+    try { require('fs').rmSync(tmpDir, { recursive: true }); } catch {}
+  }
+}
+
+module.exports = { performOCR, performOCRFromBuffer };

@@ -4,20 +4,10 @@ const multer = require('multer');
 const path = require('path');
 const { protect } = require('../middleware/auth');
 
-// Multer config for document uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = path.join(__dirname, '../../uploads');
-    require('fs').mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, unique + path.extname(file.originalname));
-  }
-});
+// Multer with MEMORY storage — file stored as buffer in req.file.buffer
+// Then saved as base64 in MongoDB, so it persists across Render redeploys
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: (req, file, cb) => {
     const allowed = ['.pdf', '.png', '.jpg', '.jpeg', '.xlsx', '.csv'];
@@ -29,7 +19,7 @@ const upload = multer({
 
 // ── Controllers ──
 const { submitQuery, getQueries, updateQuery } = require('../controllers/complianceController');
-const { uploadDocument, getDocuments, reviewDocument, getDocumentStats } = require('../controllers/documentController');
+const { uploadDocument, getDocuments, reviewDocument, getDocumentStats, serveFile } = require('../controllers/documentController');
 const { generateCalendar, getUpcoming, getClientCalendar, markComplete } = require('../controllers/calendarController');
 const { requestMagicLink, validateMagicLink, getMagicLinks, revokeTokens } = require('../controllers/magicLinkController');
 const { zohoWebhook, tallyPush, triggerDemoSync, getSyncRecords, getSyncStats, resolveConflictRecord } = require('../controllers/syncController');
@@ -48,6 +38,7 @@ router.post('/documents/upload', upload.single('document'), uploadDocument);   /
 router.get('/admin/documents', protect, getDocuments);                         // Admin: list
 router.get('/admin/documents/stats', protect, getDocumentStats);               // Admin: stats
 router.put('/admin/documents/:id/review', protect, reviewDocument);            // Admin: verify
+router.get('/admin/documents/:id/file', protect, serveFile);                   // Admin: preview file
 
 // ══════════════════
 // FEATURE 3: Statutory Calendar
