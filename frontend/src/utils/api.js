@@ -84,3 +84,5 @@ export const triggerDemoSync = (data) => api.post('/sync/demo/trigger', data);
 export const getSyncRecords = (params) => api.get('/admin/sync/records', { params });
 export const getSyncStats = () => api.get('/admin/sync/stats');
 export const resolveSyncConflict = (id, data) => api.put(`/admin/sync/${id}/resolve`, data);
+
+export const getDocumentFileData = (id) => api.get(`/admin/documents/${id}/filedata`);

@@ -193,4 +193,43 @@ function getMimeFromFilename(filename) {
   return map[ext] || 'application/octet-stream';
 }
 
-module.exports = { uploadDocument, getDocuments, reviewDocument, getDocumentStats, serveFile };
+
+// GET /api/admin/documents/:id/filedata — returns base64 as JSON for frontend rendering
+// This avoids iframe/img issues when Render is sleeping
+const getFileData = async (req, res, next) => {
+  try {
+    const doc = await Document.findById(req.params.id).select('+fileData +fileMimeType');
+    if (!doc) return res.status(404).json({ success: false, message: 'Document not found' });
+
+    if (doc.fileData) {
+      return res.json({
+        success: true,
+        data: {
+          base64: doc.fileData,
+          mimeType: doc.fileMimeType || doc.mimeType || 'application/octet-stream',
+          fileName: doc.originalFileName,
+          fileSize: doc.fileSize,
+        }
+      });
+    }
+
+    // Legacy: try reading from disk
+    const path = require('path');
+    const fs = require('fs');
+    if (doc.fileUrl) {
+      const absPath = path.isAbsolute(doc.fileUrl)
+        ? doc.fileUrl
+        : path.join(__dirname, '../../uploads', path.basename(doc.fileUrl));
+      if (fs.existsSync(absPath)) {
+        const buffer = fs.readFileSync(absPath);
+        const base64 = buffer.toString('base64');
+        const mimeType = getMimeFromFilename(doc.originalFileName);
+        return res.json({ success: true, data: { base64, mimeType, fileName: doc.originalFileName, fileSize: doc.fileSize } });
+      }
+    }
+
+    return res.status(404).json({ success: false, message: 'File not available. Please ask client to re-upload.' });
+  } catch (err) { next(err); }
+};
+
+module.exports = { uploadDocument, getDocuments, reviewDocument, getDocumentStats, serveFile, getFileData };

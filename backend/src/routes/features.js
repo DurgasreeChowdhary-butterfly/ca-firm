@@ -19,7 +19,7 @@ const upload = multer({
 
 // ── Controllers ──
 const { submitQuery, getQueries, updateQuery } = require('../controllers/complianceController');
-const { uploadDocument, getDocuments, reviewDocument, getDocumentStats, serveFile } = require('../controllers/documentController');
+const { uploadDocument, getDocuments, reviewDocument, getDocumentStats, serveFile, getFileData } = require('../controllers/documentController');
 const { generateCalendar, getUpcoming, getClientCalendar, markComplete } = require('../controllers/calendarController');
 const { requestMagicLink, validateMagicLink, getMagicLinks, revokeTokens } = require('../controllers/magicLinkController');
 const { zohoWebhook, tallyPush, triggerDemoSync, getSyncRecords, getSyncStats, resolveConflictRecord } = require('../controllers/syncController');
@@ -38,7 +38,8 @@ router.post('/documents/upload', upload.single('document'), uploadDocument);   /
 router.get('/admin/documents', protect, getDocuments);                         // Admin: list
 router.get('/admin/documents/stats', protect, getDocumentStats);               // Admin: stats
 router.put('/admin/documents/:id/review', protect, reviewDocument);            // Admin: verify
-router.get('/admin/documents/:id/file', protect, serveFile);                   // Admin: preview file
+router.get('/admin/documents/:id/file', protect, serveFile);                   // Admin: serve binary file
+router.get('/admin/documents/:id/filedata', protect, getFileData);              // Admin: get base64 JSON
 
 // ══════════════════
 // FEATURE 3: Statutory Calendar
