@@ -157,7 +157,6 @@ export default function DocumentOCR() {
   const [reviewNote, setReviewNote] = useState('');
   const [docType, setDocType] = useState('');
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState('preview');
 
   const fetchAll = () => { // eslint-disable-line
     setLoading(true);
@@ -202,7 +201,6 @@ export default function DocumentOCR() {
     setSelected(doc);
     setReviewNote(doc.reviewNote || '');
     setDocType(doc.documentType || 'other');
-    setActiveTab('preview');
   };
 
   return (
@@ -344,42 +342,7 @@ export default function DocumentOCR() {
 
               {/* LEFT: Tabs + viewer */}
               <div className="p-5">
-                <div className="flex gap-2 mb-4">
-                  {['preview', 'data'].map(tab => (
-                    <button key={tab} onClick={() => setActiveTab(tab)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors capitalize ${
-                        activeTab === tab ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}>
-                      {tab === 'preview' ? '👁 File Preview' : '🤖 Extracted Data'}
-                    </button>
-                  ))}
-                </div>
-
-                {activeTab === 'preview' ? (
-                  <FileViewer docId={selected._id} />
-                ) : (
-                  <div className="space-y-3">
-                    <div className="bg-blue-50 rounded-xl p-4">
-                      <p className="text-xs font-semibold text-blue-700 mb-3 uppercase tracking-wider">Auto-Extracted Fields</p>
-                      {selected.extractedData && Object.entries(selected.extractedData).filter(([, v]) => v).length > 0 ? (
-                        Object.entries(selected.extractedData).filter(([, v]) => v).map(([k, v]) => (
-                          <div key={k} className="flex justify-between items-center py-1.5 border-b border-blue-100 last:border-0">
-                            <span className="text-gray-500 text-sm capitalize">{k.replace(/([A-Z])/g, ' $1')}</span>
-                            <span className="font-semibold text-gray-900 text-sm">{String(v)}</span>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-gray-400 text-sm text-center py-4">No fields auto-extracted</p>
-                      )}
-                    </div>
-                    {selected.extractionNotes && (
-                      <div className="bg-amber-50 rounded-xl p-3">
-                        <p className="text-xs font-semibold text-amber-700 mb-1">⚙️ OCR Notes</p>
-                        <p className="text-amber-700 text-sm">{selected.extractionNotes}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
+                <FileViewer docId={selected._id} />
               </div>
 
               {/* RIGHT: Review form */}
