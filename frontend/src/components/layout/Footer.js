@@ -38,7 +38,7 @@ export default function Footer() {
               <p className="text-xs text-gray-400 mb-1">ICAI Registration</p>
               <p className="text-white text-sm font-semibold">Membership No: {ICAI_NO}</p>
               <a
-                href="https://www.icai.org/post/know-your-ca"
+                href="https://eservices.icai.org/icai-eres/memberSearch.html"
                 target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-xs mt-1 transition-colors"
               >

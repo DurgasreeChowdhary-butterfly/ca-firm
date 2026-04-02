@@ -85,6 +85,9 @@ export default function Appointments() {
                     <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${STATUS_COLORS[apt.status]}`}>{apt.status}</span>
                   </div>
                   <p className="text-gray-500 text-sm">{apt.email} · {apt.phone}</p>
+                  {apt.whatsapp && apt.whatsapp !== apt.phone && (
+                    <p className="text-green-600 text-xs mt-0.5">💬 WhatsApp: {apt.whatsapp}</p>
+                  )}
                   <div className="flex flex-wrap gap-4 text-sm mt-2">
                     <span className="flex items-center gap-1.5 text-blue-700 font-semibold">
                       <Calendar className="w-4 h-4" />
@@ -96,6 +99,20 @@ export default function Appointments() {
                   {apt.adminNotes && <p className="text-blue-600 text-xs mt-1 bg-blue-50 px-2 py-1 rounded">📝 {apt.adminNotes}</p>}
                 </div>
                 <div className="flex gap-2">
+                  {/* WhatsApp client */}
+                  {(apt.whatsapp || apt.phone) && (
+                    <a href={`https://wa.me/${(apt.whatsapp || apt.phone).replace(/[^0-9]/g,'')}?text=${encodeURIComponent(`Hi ${apt.name}, your appointment for ${apt.service} is confirmed on ${new Date(apt.date).toLocaleDateString('en-IN')} at ${apt.timeSlot}. See you soon! — CA Firm Mumbai`)}`}
+                      target="_blank" rel="noopener noreferrer" title="WhatsApp client"
+                      className="p-2 rounded-lg hover:bg-green-50 text-green-600 border border-green-100 transition-colors flex items-center text-base">
+                      💬
+                    </a>
+                  )}
+                  {apt.phone && (
+                    <a href={`tel:${apt.phone}`} title="Call client"
+                      className="p-2 rounded-lg hover:bg-blue-50 text-blue-600 border border-blue-100 transition-colors flex items-center text-base">
+                      📞
+                    </a>
+                  )}
                   <button onClick={() => openEdit(apt)} className="p-2 rounded-lg hover:bg-blue-50 text-blue-600 border border-blue-100 transition-colors"><Edit className="w-4 h-4" /></button>
                   <button onClick={() => handleDelete(apt._id)} className="p-2 rounded-lg hover:bg-red-50 text-red-500 border border-red-100 transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>

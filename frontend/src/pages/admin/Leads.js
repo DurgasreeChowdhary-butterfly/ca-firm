@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getLeads, updateLead, deleteLead } from '../../utils/api';
-import { Search, Trash2, Edit, X, Check } from 'lucide-react';
+import { Search, Filter, Trash2, Edit, X, Check } from 'lucide-react';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import toast from 'react-hot-toast';
 
@@ -110,6 +110,9 @@ export default function Leads() {
                       <p className="font-semibold text-gray-900">{lead.name}</p>
                       <p className="text-gray-400 text-xs">{lead.email}</p>
                       <p className="text-gray-400 text-xs">{lead.phone}</p>
+                      {lead.whatsapp && lead.whatsapp !== lead.phone && (
+                        <p className="text-green-600 text-xs">💬 {lead.whatsapp}</p>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-gray-600 text-xs max-w-[120px]">{lead.service}</td>
                     <td className="px-4 py-3 text-gray-500 text-xs max-w-[160px] truncate">{lead.message || '—'}</td>
@@ -118,7 +121,24 @@ export default function Leads() {
                     </td>
                     <td className="px-4 py-3 text-gray-400 text-xs whitespace-nowrap">{new Date(lead.createdAt).toLocaleDateString('en-IN')}</td>
                     <td className="px-4 py-3">
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 flex-wrap">
+                        {/* WhatsApp — direct link to chat with client */}
+                        {(lead.whatsapp || lead.phone) && (
+                          <a
+                            href={`https://wa.me/${(lead.whatsapp || lead.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${lead.name}, this is CA Firm Mumbai. You enquired about ${lead.service}. How can we help you?`)}`}
+                            target="_blank" rel="noopener noreferrer"
+                            title="WhatsApp client"
+                            className="p-1.5 rounded-lg hover:bg-green-50 text-green-600 transition-colors flex items-center">
+                            💬
+                          </a>
+                        )}
+                        {/* Call */}
+                        {lead.phone && (
+                          <a href={`tel:${lead.phone}`} title="Call client"
+                            className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors flex items-center">
+                            📞
+                          </a>
+                        )}
                         <button onClick={() => openEdit(lead)} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"><Edit className="w-3.5 h-3.5" /></button>
                         <button onClick={() => handleDelete(lead._id)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>

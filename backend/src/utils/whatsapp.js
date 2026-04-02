@@ -32,9 +32,11 @@ async function sendWhatsApp(to, message) {
   } else if (PROVIDER === 'wati') {
     return sendViaWATI(phone, message);
   } else {
-    // Development mode: just log
-    console.log(`\n📱 [WhatsApp MOCK] To: ${phone}\n${message}\n`);
-    return { success: true, mock: true };
+    // No provider configured — log the message and return a wa.me URL
+    // CA can click this URL from Render logs to manually send via WhatsApp Web
+    const waUrl = `https://wa.me/${phone.replace('+','')}?text=${encodeURIComponent(message)}`;
+    console.log(`\n📱 [WhatsApp] No provider set. To send manually open:\n${waUrl}\n`);
+    return { success: true, mock: true, waUrl };
   }
 }
 

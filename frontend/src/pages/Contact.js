@@ -131,7 +131,7 @@ export default function Contact() {
               <div className="bg-white rounded-2xl p-4 shadow-sm border border-blue-100">
                 <p className="text-xs text-gray-500 mb-1">ICAI Membership No</p>
                 <p className="font-bold text-gray-900 text-sm">{ICAI_NO}</p>
-                <a href="https://www.icai.org/post/know-your-ca" target="_blank" rel="noopener noreferrer"
+                <a href="https://eservices.icai.org/icai-eres/memberSearch.html" target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-1 text-blue-600 text-xs hover:underline mt-1">
                   Verify on ICAI Portal <ExternalLink className="w-3 h-3" />
                 </a>

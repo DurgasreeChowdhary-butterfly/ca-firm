@@ -298,7 +298,7 @@ export default function Home() {
           </div>
           <div className="text-center mt-6">
             <a
-              href="https://www.icai.org/post/know-your-ca"
+              href="https://eservices.icai.org/icai-eres/memberSearch.html"
               target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-blue-300 hover:text-white text-sm transition-colors"
             >
@@ -343,7 +343,7 @@ export default function Home() {
                   className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-all">
                   <Phone className="w-4 h-4" /> Call Directly
                 </a>
-                <a href="https://www.icai.org/post/know-your-ca" target="_blank" rel="noopener noreferrer"
+                <a href="https://eservices.icai.org/icai-eres/memberSearch.html" target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-1 border border-blue-200 text-blue-700 hover:bg-blue-50 font-medium px-4 py-2 rounded-xl text-sm transition-all">
                   Verify ICAI <ExternalLink className="w-3.5 h-3.5" />
                 </a>
