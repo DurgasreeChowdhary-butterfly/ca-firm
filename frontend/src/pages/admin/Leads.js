@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getLeads, updateLead, deleteLead } from '../../utils/api';
-import { Search, Filter, Trash2, Edit, X, Check } from 'lucide-react';
+import { Search, Filter, Trash2, Edit, X, Check, Phone } from 'lucide-react';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import toast from 'react-hot-toast';
 
@@ -129,14 +129,14 @@ export default function Leads() {
                             target="_blank" rel="noopener noreferrer"
                             title="WhatsApp client"
                             className="p-1.5 rounded-lg hover:bg-green-50 text-green-600 transition-colors flex items-center">
-                            💬
+                            <svg viewBox="0 0 32 32" className="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.833.737 5.494 2.027 7.8L0 32l8.469-2.001A15.944 15.944 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.406 22.594c-.35.982-1.731 1.8-2.85 2.037-.756.162-1.744.291-5.069-1.088-4.25-1.737-6.987-6.044-7.2-6.325-.206-.281-1.688-2.25-1.688-4.287 0-2.038 1.069-3.038 1.45-3.45.381-.412.831-.512 1.106-.512.275 0 .55.003.794.012.256.011.6-.097.938.713.35.831 1.188 2.869 1.294 3.075.106.206.175.45.031.725-.131.275-.2.45-.406.694-.206.244-.431.544-.613.731-.206.206-.419.431-.181.844.238.412 1.056 1.744 2.269 2.825 1.556 1.387 2.869 1.819 3.281 2.025.413.206.656.175.9-.1.244-.281 1.044-1.219 1.325-1.637.281-.419.563-.35.95-.213.388.138 2.45 1.156 2.869 1.363.419.206.694.306.8.481.106.175.106 1.019-.244 2z"/></svg>
                           </a>
                         )}
                         {/* Call */}
                         {lead.phone && (
                           <a href={`tel:${lead.phone}`} title="Call client"
                             className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors flex items-center">
-                            📞
+                            <Phone className="w-4 h-4" />
                           </a>
                         )}
                         <button onClick={() => openEdit(lead)} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"><Edit className="w-3.5 h-3.5" /></button>

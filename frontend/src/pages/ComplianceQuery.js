@@ -122,21 +122,25 @@ export default function ComplianceQuery() {
 
                   <button type="submit" disabled={loading}
                     className="w-full bg-blue-700 hover:bg-blue-800 disabled:bg-blue-400 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
-                    {loading ? <><Loader className="w-4 h-4 animate-spin" /> Processing...</> : <><Send className="w-4 h-4" /> Get AI Answer</>}
+                    {loading ? <><Loader className="w-4 h-4 animate-spin" /> AI is thinking...</> : <><Send className="w-4 h-4" /> Get AI Answer</>}
                   </button>
                 </form>
 
                 {result && (
                   <div className="mt-6 pt-6 border-t border-gray-100">
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-2 mb-4 flex-wrap">
                       <CheckCircle className="w-5 h-5 text-green-600" />
                       <span className="font-semibold text-gray-900">Answer</span>
                       <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{result.category}</span>
-                      <span className="text-xs text-gray-400">by {result.answeredBy}</span>
+                      {result.answeredBy && (
+                        <span className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">
+                          🤖 {result.answeredBy}
+                        </span>
+                      )}
                       {result.notified && <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">💬 Sent to WhatsApp</span>}
                     </div>
-                    <div className="bg-green-50 rounded-xl p-4 mb-4">
-                      <p className="text-gray-800 text-sm leading-relaxed">{result.answer}</p>
+                    <div className={`rounded-xl p-4 mb-4 ${result.status === 'answered' ? 'bg-green-50 border border-green-100' : 'bg-amber-50 border border-amber-100'}`}>
+                      <p className="text-gray-800 text-sm leading-relaxed whitespace-pre-line">{result.answer}</p>
                     </div>
                     {result.citations?.length > 0 && (
                       <div className="space-y-2">

@@ -8,6 +8,7 @@ import Layout from './components/layout/Layout';
 import AdminLayout from './components/layout/AdminLayout';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import ClientLoginModal from './components/common/ClientLoginModal';
 
 // Lazy load pages
 const Home = lazy(() => import('./pages/Home'));

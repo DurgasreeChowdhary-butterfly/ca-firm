@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/common/SEO';
 import LeadForm from '../components/common/LeadForm';
+import DemoVideo from '../components/common/DemoVideo';
 import { SERVICES, TESTIMONIALS, STATS, FAQS } from '../data';
 import { ArrowRight, CheckCircle, Star, ChevronDown, Award, Shield, Clock, Users, Phone, ExternalLink } from 'lucide-react';
-import GoogleReviews from '../components/common/GoogleReviews';
 
-const PHONE_TEL = 'tel:+919876543210';
-const PHONE_DISPLAY = '+91 98765 43210';
+const PHONE_TEL = 'tel:+919080134783';
+const PHONE_DISPLAY = '+91 90801 34783';
 const ICAI_NO = 'XXXXXX';
 const CITY = 'Mumbai';
 
@@ -23,22 +23,22 @@ const caseStudies = [
     type: 'E-commerce Startup',
     problem: '3-year GST backlog with multiple platforms',
     solution: 'Reconciled all GSTR filings, cleared penalties through appeal',
-    result: 'Penalty of ₹2.4L waived, business GST-compliant in 45 days',
-    icon: '🛒',
+    result: 'Penalty of \u20b92.4L waived, business GST-compliant in 45 days',
+    icon: '\ud83d\uded2',
   },
   {
     type: 'Salaried Professional',
-    problem: 'Multiple income sources — salary, freelance, capital gains',
+    problem: 'Multiple income sources \u2014 salary, freelance, capital gains',
     solution: 'Optimised deductions under 80C, 80D, HRA, home loan',
-    result: 'Tax liability reduced by ₹87,000 in a single filing year',
-    icon: '👔',
+    result: 'Tax liability reduced by \u20b987,000 in a single filing year',
+    icon: '\ud83d\udc54',
   },
   {
     type: 'Manufacturing SME',
     problem: 'Statutory audit due, books unreconciled for 2 years',
     solution: 'Full audit with books cleanup, compliance calendar set up',
     result: 'Clean audit report delivered in 3 weeks, bank loan approved',
-    icon: '🏭',
+    icon: '\ud83c\udfed',
   },
 ];
 
@@ -59,13 +59,13 @@ export default function Home() {
     <>
       <SEO
         title={`Trusted CA Firm in ${CITY}`}
-        description={`Professional CA services in ${CITY} — Income Tax, GST, Company Registration, Audit & Tax Planning. ICAI No: ${ICAI_NO}. 500+ clients, 15+ years. Call ${PHONE_DISPLAY}.`}
+        description={`Professional CA services in ${CITY} \u2014 Income Tax, GST, Company Registration, Audit & Tax Planning. ICAI No: ${ICAI_NO}. 500+ clients, 15+ years. Call ${PHONE_DISPLAY}.`}
         keywords={`CA firm ${CITY}, GST consultant ${CITY}, income tax ${CITY}, chartered accountant ${CITY}`}
         canonical="/"
         schema={homeSchema}
       />
 
-      {/* ── Hero ── */}
+      {/* \u2500\u2500 Hero \u2500\u2500 */}
       <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 rounded-full bg-white blur-3xl" />
@@ -76,38 +76,38 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-2 bg-blue-700/50 border border-blue-500/30 rounded-full px-4 py-2 text-sm text-blue-200 mb-6">
                 <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                Trusted CA Firm in {CITY} · ICAI No: {ICAI_NO}
+                Trusted CA Firm in {CITY} \u00b7 ICAI No: {ICAI_NO}
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Expert CA Services <span className="text-amber-400">in {CITY}</span>
               </h1>
-              {/* City + specialty in subheading — critical for local SEO */}
+              {/* City + specialty in subheading \u2014 critical for local SEO */}
               <p className="text-blue-100 text-lg mb-6 leading-relaxed">
-                Serving businesses and individuals in {CITY} for 15+ years. GST filing, Income Tax, Audit, Company Registration — handled with precision and integrity.
+                Serving businesses and individuals in {CITY} for 15+ years. GST filing, Income Tax, Audit, Company Registration \u2014 handled with precision and integrity.
               </p>
               <div className="flex flex-wrap gap-4 mb-6">
                 <Link to="/book-appointment"
                   className="bg-amber-400 hover:bg-amber-500 text-blue-900 font-bold px-6 py-3 rounded-xl transition-all shadow-lg hover:shadow-amber-400/30 flex items-center gap-2">
                   Book Free Consultation <ArrowRight className="w-4 h-4" />
                 </Link>
-                {/* WhatsApp CTA — second most important */}
+                {/* WhatsApp CTA \u2014 second most important */}
                 <a
-                  href={`https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER || '919876543210'}?text=Hello%2C%20I%20need%20CA%20services`}
+                  href={`https://wa.me/${process.env.REACT_APP_WHATSAPP_NUMBER || '919080134783'}?text=Hello%2C%20I%20need%20CA%20services`}
                   target="_blank" rel="noopener noreferrer"
                   className="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-xl transition-all flex items-center gap-2"
                 >
-                  💬 WhatsApp Us Now
+                  \ud83d\udcac WhatsApp Us Now
                 </a>
               </div>
-              {/* Phone visible above fold — critical fix */}
+              {/* Phone visible above fold \u2014 critical fix */}
               <a href={PHONE_TEL}
                 className="inline-flex items-center gap-2 text-amber-300 hover:text-amber-200 font-semibold text-lg transition-colors">
                 <Phone className="w-5 h-5" />
                 {PHONE_DISPLAY}
-                <span className="text-blue-300 text-sm font-normal">— Click to call</span>
+                <span className="text-blue-300 text-sm font-normal">\u2014 Click to call</span>
               </a>
               <div className="mt-6 flex flex-wrap gap-6">
-                {['10K+ ITRs Filed', '5K+ GST Returns', '200+ Companies', '₹2Cr+ Tax Saved'].map((label, i) => (
+                {['10K+ ITRs Filed', '5K+ GST Returns', '200+ Companies', '\u20b92Cr+ Tax Saved'].map((label, i) => (
                   <div key={label} className="text-center">
                     <p className="text-xl font-bold text-amber-400">{label.split(' ')[0]}</p>
                     <p className="text-blue-200 text-xs">{label.split(' ').slice(1).join(' ')}</p>
@@ -118,14 +118,14 @@ export default function Home() {
             {/* Lead Form */}
             <div className="bg-white rounded-2xl shadow-2xl p-6 lg:p-8">
               <h2 className="text-xl font-bold text-gray-900 mb-1">Get Free Consultation</h2>
-              <p className="text-gray-500 text-sm mb-5">Fill the form — we'll call back within 2 hours</p>
+              <p className="text-gray-500 text-sm mb-5">Fill the form \u2014 we'll call back within 2 hours</p>
               <LeadForm compact />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Trust Badges ── */}
+      {/* \u2500\u2500 Trust Badges \u2500\u2500 */}
       <section className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -141,7 +141,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Services ── */}
+      {/* \u2500\u2500 Services \u2500\u2500 */}
+      {/* ── Demo Video ── */}
+      <DemoVideo />
+
       <section className="py-16 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -177,13 +180,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Mid-page CTA Band — breaks monotony, audit recommendation ── */}
+      {/* \u2500\u2500 Mid-page CTA Band \u2014 breaks monotony, audit recommendation \u2500\u2500 */}
       <section className="bg-blue-900 py-10">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
             Not Sure Which Service You Need?
           </h2>
-          <p className="text-blue-200 mb-6">Talk to our CA in {CITY} — completely free 30-min consultation.</p>
+          <p className="text-blue-200 mb-6">Talk to our CA in {CITY} \u2014 completely free 30-min consultation.</p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link to="/book-appointment"
               className="bg-amber-400 hover:bg-amber-500 text-blue-900 font-bold px-7 py-3 rounded-xl transition-all flex items-center gap-2">
@@ -197,7 +200,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Case Studies — audit said this is the most powerful trust builder ── */}
+      {/* \u2500\u2500 Case Studies \u2014 audit said this is the most powerful trust builder \u2500\u2500 */}
       <section className="py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -230,7 +233,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Why Choose Us + Stats ── */}
+      {/* \u2500\u2500 Why Choose Us + Stats \u2500\u2500 */}
       <section className="py-16 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -242,8 +245,8 @@ export default function Home() {
                 {[
                   { title: 'ICAI Certified Professionals', desc: `All our CAs are ICAI-certified (Membership No: ${ICAI_NO}) with specializations in tax, audit, and corporate law.` },
                   { title: 'Local Expertise in ' + CITY, desc: `Deep knowledge of local business environment, Mumbai CA requirements, and Maharashtra-specific compliance.` },
-                  { title: 'Timely Delivery — Always', desc: 'We meet deadlines without exception. Your compliance filings are never late.' },
-                  { title: 'Transparent Pricing', desc: 'Clear fees, no hidden charges. Starting from ₹999. You know exactly what you pay for.' },
+                  { title: 'Timely Delivery \u2014 Always', desc: 'We meet deadlines without exception. Your compliance filings are never late.' },
+                  { title: 'Transparent Pricing', desc: 'Clear fees, no hidden charges. Starting from \u20b9999. You know exactly what you pay for.' },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4">
                     <div className="w-8 h-8 rounded-full bg-blue-700 text-white flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">{i + 1}</div>
@@ -267,7 +270,7 @@ export default function Home() {
               </div>
               <div className="mt-6 pt-6 border-t border-white/20">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-amber-400">★★★★★</span>
+                  <span className="text-amber-400">\u2605\u2605\u2605\u2605\u2605</span>
                   <span className="text-white text-sm font-semibold">4.9/5 Client Rating</span>
                 </div>
                 <Link to="/contact" className="block text-center bg-amber-400 hover:bg-amber-500 text-blue-900 font-bold px-6 py-3 rounded-xl transition-all">
@@ -279,15 +282,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Credentials / ICAI Trust Section ── */}
+      {/* \u2500\u2500 Credentials / ICAI Trust Section \u2500\u2500 */}
       <section className="py-12 bg-blue-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { label: 'ICAI Membership', value: `No: ${ICAI_NO}`, icon: '🏛️' },
-              { label: 'Practice Since', value: '2008', icon: '📅' },
-              { label: 'UDIN Compliance', value: '100% Certified', icon: '✅' },
-              { label: 'Code of Ethics', value: 'ICAI Adherent', icon: '⚖️' },
+              { label: 'ICAI Membership', value: `No: ${ICAI_NO}`, icon: '\ud83c\udfdb\ufe0f' },
+              { label: 'Practice Since', value: '2008', icon: '\ud83d\udcc5' },
+              { label: 'UDIN Compliance', value: '100% Certified', icon: '\u2705' },
+              { label: 'Code of Ethics', value: 'ICAI Adherent', icon: '\u2696\ufe0f' },
             ].map((item, i) => (
               <div key={i} className="bg-blue-800/50 rounded-xl p-4">
                 <div className="text-3xl mb-2">{item.icon}</div>
@@ -298,7 +301,7 @@ export default function Home() {
           </div>
           <div className="text-center mt-6">
             <a
-              href="https://eservices.icai.org/icai-eres/memberSearch.html"
+              href="https://www.icai.org/post/know-your-ca"
               target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-blue-300 hover:text-white text-sm transition-colors"
             >
@@ -308,80 +311,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── CA Photo + Personal Trust Section ── */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* CA Photo side */}
-            <div className="flex flex-col items-center lg:items-start">
-              <p className="text-blue-700 font-semibold text-sm uppercase tracking-wider mb-4">Meet Your CA</p>
-              <div className="relative mb-6">
-                {/* Photo placeholder — replace src with real CA photo */}
-                <div className="w-64 h-64 rounded-2xl overflow-hidden shadow-xl border-4 border-blue-100">
-                  <img
-                    src="https://ui-avatars.com/api/?name=CA+Rajan+Sharma&background=1e40af&color=fff&size=256&font-size=0.3"
-                    alt="CA Rajan Sharma - Founder, CA Firm Mumbai"
-                    className="w-full h-full object-cover"
-                    onError={e => {
-                      e.target.style.display = 'none';
-                      e.target.parentElement.style.background = '#1e40af';
-                    }}
-                  />
-                </div>
-                {/* ICAI badge overlay */}
-                <div className="absolute -bottom-3 -right-3 bg-amber-400 text-blue-900 px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg">
-                  ICAI Reg: {ICAI_NO}
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>CA Rajan Sharma</h3>
-              <p className="text-blue-700 font-medium mb-2">Founder & Senior Partner · FCA</p>
-              <p className="text-gray-500 text-sm text-center lg:text-left leading-relaxed max-w-sm">
-                FCA with 20 years of experience in corporate taxation, statutory audits, and business advisory for SMEs across {CITY}.
-              </p>
-              <div className="flex gap-3 mt-4">
-                <a href={PHONE_TEL}
-                  className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-all">
-                  <Phone className="w-4 h-4" /> Call Directly
-                </a>
-                <a href="https://eservices.icai.org/icai-eres/memberSearch.html" target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-1 border border-blue-200 text-blue-700 hover:bg-blue-50 font-medium px-4 py-2 rounded-xl text-sm transition-all">
-                  Verify ICAI <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-            {/* Message from CA */}
-            <div>
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100 relative">
-                <div className="text-6xl text-blue-200 font-serif absolute top-4 left-6 leading-none">"</div>
-                <div className="pt-4">
-                  <p className="text-gray-700 text-lg leading-relaxed italic mb-4">
-                    I started this firm with one mission — to give every business owner and individual in {CITY} access to expert, honest financial guidance. Not just the large corporates, but every small business, every salaried employee, every startup founder.
-                  </p>
-                  <p className="text-gray-700 leading-relaxed italic">
-                    In 20 years, what hasn't changed is our commitment: we meet every deadline, we explain everything in plain language, and we genuinely care about your financial outcome.
-                  </p>
-                  <div className="mt-6 pt-4 border-t border-blue-100">
-                    <div className="flex gap-1 mb-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
-                      ))}
-                    </div>
-                    <p className="text-gray-600 text-sm">Personally handled 2,000+ client cases · Never missed a filing deadline</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Testimonials ── */}
+      {/* \u2500\u2500 Testimonials \u2500\u2500 */}
       <section className="py-16 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-blue-700 font-semibold text-sm uppercase tracking-wider mb-2">Client Reviews</p>
             <h2 className="section-title">What Our {CITY} Clients Say</h2>
-            <p className="text-gray-400 text-sm mt-2">⭐⭐⭐⭐⭐ 4.9/5 average rating from 127+ clients</p>
+            <p className="text-gray-400 text-sm mt-2">\u2b50\u2b50\u2b50\u2b50\u2b50 4.9/5 average rating from 127+ clients</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {TESTIMONIALS.map((t, i) => (
@@ -403,10 +339,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Google Reviews ── */}
-      <GoogleReviews />
-
-      {/* ── FAQ ── */}
+      {/* \u2500\u2500 FAQ \u2500\u2500 */}
       <section className="py-16 lg:py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -434,7 +367,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Final CTA ── */}
+      {/* \u2500\u2500 Final CTA \u2500\u2500 */}
       <section className="py-16 bg-gradient-to-r from-blue-900 to-blue-700 text-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
